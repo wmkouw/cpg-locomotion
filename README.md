@@ -1,2 +1,3 @@
 # cpg-locomotion
-BEP: Central pattern generator for quadrupedal robot locomotion.
+
+BEP 2025: Central pattern generator for quadrupedal robot locomotion.
