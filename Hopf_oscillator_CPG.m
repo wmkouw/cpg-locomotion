@@ -1,3 +1,6 @@
+close all
+clear
+
 %% 4 Oscillators(Hopf)
 
 
