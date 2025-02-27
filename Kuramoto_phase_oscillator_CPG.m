@@ -12,9 +12,9 @@ Sim_time = 5;
 
 
 %Oscillator parameters
-w = 5;
+w = 10;
 lambda = 4;
-mu = 1;
+mu = 10;
 R = 2;
 %Walking gait
 phi = [0 pi pi/2 3*pi/2;
@@ -50,7 +50,7 @@ for i = 2:Sim_time/dt
             sine_sum = sine_sum + sin(theta(k,i-1) - theta(j,i-1) - phi(j,k));
         end
         theta(j,i) = theta(j,i-1) + dt*(w + lambda*sine_sum);
-        r(j,i) = r(j,i) + dt*(u(j,i-1));
+        r(j,i) = r(j,i-1) + dt*(u(j,i-1));
         u(j,i) = u(j,i-1) + dt*(mu^2 * (R - r(j,i-1)) - 3/2 * mu*u(j,i-1));
         x(j,i-1) = r(j,i-1).*(sin(theta(j,i-1)));
         y(j,i-1) = r(j,i-1).*(cos(theta(j,i-1)));
