@@ -1,10 +1,9 @@
-%%
+%% Clear
 
 close all;
 clearvars;
 
-%%
-
+%% Initialization
 % Time
 dt = 0.01;
 len_time = 1000;
@@ -13,7 +12,7 @@ tsteps = 0:dt:(dt*(len_time-1));
 % Parameters
 alpha = 1.0;
 beta = 1.0;
-mu = 1.0;
+mu = 0.5;
 b = 100;
 K = [ 0 -1  1 -1;
      -1  0 -1  1;
@@ -27,10 +26,12 @@ num_legs = 4;
 x_ = zeros(num_legs,len_time);
 y_ = zeros(num_legs,len_time);
 
-% Initialize 
+% Initialize output x and y
 x_kmin1 = 1e-3*randn(num_legs,1);
 y_kmin1 = 1e-3*randn(num_legs,1);
 
+
+%% computing
 for k = 1:len_time
 
     for i = 1:num_legs
@@ -47,8 +48,9 @@ for k = 1:len_time
     y_kmin1 = y_(:,k);
 end
 
-%% Plot all oscillators over time
 
+
+%% Plot all oscillators over time
 figure(1)
 set(gcf, 'Position', [100 200 1500 500])
 
@@ -62,8 +64,8 @@ plot(tsteps, y_')
 xlabel('time (s)')
 ylabel('y_i(t)')
 
-%% Plot each oscillator over space
 
+%% Plot each oscillator over space
 figure(2)
 set(gcf, 'Position', [200 300 1000 800])
 

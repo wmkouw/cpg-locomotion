@@ -1,0 +1,67 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Initialization
+dt = 0.01
+len_time = 1000
+tsteps = np.arange(0, len_time * dt, dt)
+
+# Parameters
+alpha = 1.0
+beta = 1.0
+mu = 0.5
+b = 100
+K = np.array([[0, -1, 1, -1],
+              [-1, 0, -1, 1],
+              [-1, 1, 0, -1],
+              [1, -1, -1, 0]])
+omega_stance = 3
+omega_swing = 3
+
+# Preallocate
+num_legs = 4
+x_ = np.zeros((num_legs, len_time))
+y_ = np.zeros((num_legs, len_time))
+
+# Initialize output x and y
+x_kmin1 = 1e-3 * np.random.randn(num_legs)
+y_kmin1 = 1e-3 * np.random.randn(num_legs)
+
+# Computing
+for k in range(len_time):
+    for i in range(num_legs):
+        ri2 = x_kmin1[i]**2 + y_kmin1[i]**2
+        omega_i = omega_stance / (np.exp(-b * y_kmin1[i]) + 1) + omega_swing / (np.exp(-b * y_kmin1[i]) + 1)
+
+        x_[i, k] = x_kmin1[i] + dt * (alpha * (mu - ri2) * x_kmin1[i] - omega_i * y_kmin1[i])
+        y_[i, k] = y_kmin1[i] + dt * (beta * (mu - ri2) * y_kmin1[i] + omega_i * x_kmin1[i] + np.dot(K[i, :], y_kmin1))
+
+    x_kmin1 = x_[:, k]
+    y_kmin1 = y_[:, k]
+
+# Plot all oscillators over time
+plt.figure(1, figsize=(15, 5))
+
+plt.subplot(121)
+plt.plot(tsteps, x_.T)
+plt.xlabel('Time (s)')
+plt.ylabel('x_i(t)')
+
+plt.subplot(122)
+plt.plot(tsteps, y_.T)
+plt.xlabel('Time (s)')
+plt.ylabel('y_i(t)')
+
+plt.show()
+
+# Plot each oscillator over space
+plt.figure(2, figsize=(10, 8))
+
+for i in range(num_legs):
+    plt.subplot(2, 2, i + 1)
+    plt.scatter(x_[i, :], y_[i, :], color='k', s=1)
+    plt.xlabel(f'x_{i+1} (s)')
+    plt.ylabel(f'y_{i+1} (s)')
+
+plt.tight_layout()
+plt.show()
