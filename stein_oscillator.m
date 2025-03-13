@@ -3,7 +3,7 @@ close all; clear;
 
 %% Parameters for the Stein model
 p = 10.0;       % Controls the rate of adaptation
-b = 2000.0;     % Adaptation parameter (corrected to be positive)
+b = -2000.0;     % Adaptation parameter (corrected to be positive)
 q = 30.0;       % Controls the rate of adaptation
 Lambda = -0.2; % Inhibitory coupling strength
 
@@ -27,7 +27,7 @@ k2 = 59.0;
 
 %% Time parameters
 T = 10;          % Total simulation time
-dt = 0.01;       % Time step
+dt = 0.005;       % Time step
 time = 0:dt:T;  % Time vector
 
 
