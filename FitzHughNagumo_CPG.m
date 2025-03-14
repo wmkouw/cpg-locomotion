@@ -79,3 +79,12 @@ ylabel('y_i(t)')
 %     ylabel(['y_' num2str(i) ' (s)'])
 % 
 % end
+
+%% Attempt with MATLAB's ODE solver
+
+t0 = 0;
+tfinal = 10;
+z0 = [0.5, 0];
+[t,z] = ode45(@FHN, [t0 tfinal], z0);
+
+plot(t,z(:,1));
