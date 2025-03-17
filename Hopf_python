@@ -3,56 +3,115 @@ import matplotlib.pyplot as plt
 
 # Initialization
 dt = 0.01
-len_time = 1000
-tsteps = np.arange(0, len_time * dt, dt)
+len_time = 10  # 10 seconds
+tsteps = np.arange(0, len_time, dt)
+
 
 # Parameters
-alpha = 1.0
-beta = 1.0
-mu = 0.5
+alpha = 5.0
+beta = 3.0
+mu = 2.0
 b = 100
-K = np.array([[0, -1, 1, -1],
-              [-1, 0, -1, 1],
-              [-1, 1, 0, -1],
-              [1, -1, -1, 0]])
-omega_stance = 3
+omega_stance = 8
 omega_swing = 3
+
+
+# Trot matrix
+
+K = np.array([[0, -1, -1, 1],
+                 [-1, 0, 1, -1],
+                 [-1, 1, 0, -1],
+                 [1, -1, -1, 0]])
+
+
+# Pace matrix
+'''
+K = np.array([[0, -1, 1, -1],
+                 [-1, 0, -1, 1],
+                 [1, -1, 0, -1],
+                 [-1, 1, -1, 0]])
+'''
+
+# Bound matrix 
+'''
+K = np.array([[0, 1, -1, -1],
+                  [1, 0, -1, -1],
+                  [-1, -1, 0, 1],
+                  [-1, -1, 1, 0]])
+'''
+# Walk matrix
+'''
+K = np.array([[0, -1, 1, -1],
+                 [-1, 0, -1, 1],
+                 [-1, 1, 0, -1],
+                 [1, -1, -1, 0]])
+'''
+
 
 # Preallocate
 num_legs = 4
-x_ = np.zeros((num_legs, len_time))
-y_ = np.zeros((num_legs, len_time))
+x_ = np.zeros((num_legs, len(tsteps))) 
+y_ = np.zeros((num_legs, len(tsteps)))
 
 # Initialize output x and y
-x_kmin1 = 1e-3 * np.random.randn(num_legs)
-y_kmin1 = 1e-3 * np.random.randn(num_legs)
+'''x_kmin1 = 1e-3 * np.random.randn(num_legs)
+y_kmin1 = 1e-3 * np.random.randn(num_legs)'''
 
-# Computing
-for k in range(len_time):
+
+x_kmin1 = np.array([0.1, 0.2, 0.3, 0.4])#to match matlab code
+y_kmin1 = np.array([0.0, 0.1, 0.2, 0.3])#''
+
+#store initial conditions in first column
+x_[:, 0] = x_kmin1
+y_[:, 0] = y_kmin1
+
+
+# Simulation loop
+for k in range(1, len(tsteps)): #1000 enum - initial = 999
+    x_current = np.zeros(num_legs)
+    y_current = np.zeros(num_legs)
+    
     for i in range(num_legs):
+        omega_i = (omega_stance / (np.exp(-b * y_kmin1[i]) + 1)) + (omega_swing / (np.exp(b * y_kmin1[i]) + 1))
         ri2 = x_kmin1[i]**2 + y_kmin1[i]**2
-        omega_i = omega_stance / (np.exp(-b * y_kmin1[i]) + 1) + omega_swing / (np.exp(-b * y_kmin1[i]) + 1)
+        
+        x_current[i] = x_kmin1[i] + dt * (alpha * (mu - ri2) * x_kmin1[i] - omega_i * y_kmin1[i])
+        y_current[i] = y_kmin1[i] + dt * (beta * (mu - ri2) * y_kmin1[i] + omega_i * x_kmin1[i] + np.dot(K[i, :], y_kmin1))
+    
+    x_kmin1 = x_current
+    y_kmin1 = y_current
+    x_[:, k] = x_current
+    y_[:, k] = y_current
 
-        x_[i, k] = x_kmin1[i] + dt * (alpha * (mu - ri2) * x_kmin1[i] - omega_i * y_kmin1[i])
-        y_[i, k] = y_kmin1[i] + dt * (beta * (mu - ri2) * y_kmin1[i] + omega_i * x_kmin1[i] + np.dot(K[i, :], y_kmin1))
-
-    x_kmin1 = x_[:, k]
-    y_kmin1 = y_[:, k]
 
 # Plot all oscillators over time
-plt.figure(1, figsize=(15, 5))
+colors = ['#D62728', '#1F77B4', '#2CA02C', '#FF7F0E']  # Dark Red, Deep Blue, Green, Orange
+linestyles = ['.', '-', '.', '-']   # for visibility when overlap
+labels = [f'Leg {i+1}' for i in range(4)]
+
+plt.figure(figsize=(15, 5))
 
 plt.subplot(121)
-plt.plot(tsteps, x_.T)
+for i in range(4):
+    plt.plot(tsteps, x_[i, :], color=colors[i], linestyle='-' if linestyles[i] == '-' else 'None', 
+             marker='.' if linestyles[i] == '.' else None, markersize=3, label=labels[i])
 plt.xlabel('Time (s)')
 plt.ylabel('x_i(t)')
 
 plt.subplot(122)
-plt.plot(tsteps, y_.T)
+for i in range(4):
+    plt.plot(tsteps, y_[i, :], color=colors[i], linestyle='-' if linestyles[i] == '-' else 'None', 
+             marker='.' if linestyles[i] == '.' else None, markersize=3)
 plt.xlabel('Time (s)')
 plt.ylabel('y_i(t)')
 
+
+plt.figlegend(labels, loc='upper center', ncol=4, fontsize=12)
 plt.show()
+
+
+
+
 
 # Plot each oscillator over space
 plt.figure(2, figsize=(10, 8))
