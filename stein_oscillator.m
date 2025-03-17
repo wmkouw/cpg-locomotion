@@ -8,22 +8,32 @@ q = 30.0;       % Controls the rate of adaptation
 Lambda = -0.2; % Inhibitory coupling strength
 
 %% WALK GAIT
-% a = 10.0;
-% f = 40.0;
-% k1 = 0.0;
-% k2 = 0.0;
+a = 10.0;
+f = 40.0;
+k1 = 0.0;
+k2 = 0.0;
 
-%% TROT GAIT 
+% walk is not correct. 1,2,3 and 4 are not out of phase by period/4 as it
+% should be. 
+
+
+% TROT GAIT 
 % a = 12.0;
 % f = 40.0;
 % k1 = 0.1;
 % k2 = 57.0;
 
-%% BOUND GAIT
-a = 16.0;
-f = 50.0;
-k1 = 0.1;
-k2 = 59.0;
+% trot in not correct : now 1 is alone and 2-3-4 are in phase.
+% should be 1,3 and 4,2 in phase 
+
+%% BOUND GAIT 
+% a = 16.0;
+% f = 50.0;
+% k1 = 0.1;
+% k2 = 59.0;
+
+%Bound is not correct: now 1-2 are in phase and 3-4 are in phase but it
+%should be 1-4 and 2-3 in phase 
 
 %% Time parameters
 T = 10;          % Total simulation time
@@ -49,7 +59,7 @@ z(:, 1) = [0.1; 0.13; 0.17; 0.19];
     Lambda, 0, 0, 0;       % Neuron 3 inhibits 1
     0, 0, Lambda, 0];      % Neuron 4 inhibits 3
 
-%% Simulate the Stein model
+
 %% Simulate the Stein model
 for t = 2:length(time)
     for i = 1:num_neurons

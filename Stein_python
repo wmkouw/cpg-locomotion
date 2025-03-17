@@ -8,18 +8,18 @@ q = 30.0  # Controls the rate of adaptation
 Lambda = -0.2  # Inhibitory coupling strength
 
 
-
-# WALK GAIT 
-# TROT GAIT  NOT WORKING 3 in phase 1 out of phase 
+'''
+# WALK GAIT  
 a = 10.0;
-f = 40.0;
+f = 35.0;
 k1 = 0.0;
 k2 = 0.0;
-''' # TROT GAIT 
+'''
+ # TROT GAIT  NOT WORKING 3 in phase 1 out of phase 
 a = 12.0;
 f = 40.0;
 k1 = 0.1;
-k2 = 57.0;'''
+k2 = 57.0;
 '''# BOUND GAIT
 a = 16.0
 f = 50.0
@@ -30,7 +30,7 @@ k2 = 59.0'''
 
 
 # Time parameters
-T = 10  # Total simulation time
+T = 5  # Total simulation time
 dt = 0.010  # Time step
 time = np.arange(0, T + dt, dt)  # Time vector
 
