@@ -51,8 +51,8 @@ cam_yaw = -104.0
 cam_pitch = -23.0
 
 # simulation
-dt = 0.05
-T = 200
+dt = 0.01
+T = 700
 timerange = np.arange(0, T, dt)
 
 X = np.zeros((T, n_legs))
@@ -73,11 +73,11 @@ K_trot = np.array([[0, -1, -1, 1], [-1, 0, 1, -1], [-1, 1, 0, -1], [1, -1, -1, 0
 K_pace = np.array([[0, -1, 1, -1], [-1, 0, -1, 1], [1, -1, 0, -1], [-1, 1, -1, 0]])
 K_bound = np.array([[0, 1, -1, -1], [1, 0, -1, -1], [-1, -1, 0, 1], [-1, -1, 1, 0]])
 K_walk = np.array([[0, -1, 1, -1], [-1, 0, -1, 1], [-1, 1, 0, -1], [1, -1, -1, 0]])
-K = K_walk
+K = K_trot
 
 mu_walk = 60*60
 mu = mu_walk
-mu = 2.0
+mu = 1.5
 alpha = 5.0
 beta = 3.0
 omega_stance = 8  # rad/s
@@ -97,11 +97,16 @@ for t in range(1, T):
         Y[t,i] = Y[t-1,i] + dt*dy_i
 
         joint_hip_ID, joint_knee_ID = joint_IDs[(i*2):(i*2)+2]
-        joint_hip_angle = X[t,i] + delta
+        if t > 500: joint_hip_angle = (X[t,i] + delta) * 0.5
+        elif t > 350 and t <= 500: joint_hip_angle = (X[t,i] + delta) * 0.2
+        else: joint_hip_angle = 0
         p.setJointMotorControl2(quadruped, joint_hip_ID, p.POSITION_CONTROL, joint_hip_angle)
         joint_knee_angle = 1.0
         if Y[t,i] >= 0: joint_knee_angle = 0.0
         if Y[t,i] < 0 and np.abs(X[t,i]) > 0.9: joint_knee_angle = 10*(1 - np.abs(X[t,i]))
+        if t > 500: joint_knee_angle = joint_knee_angle * 0.5
+        elif t > 350 and t <= 500: joint_knee_angle = joint_knee_angle * 0.2
+        else: joint_knee_angle = 0
         p.setJointMotorControl2(quadruped, joint_knee_ID, p.POSITION_CONTROL, joint_knee_angle)
 
     p.stepSimulation()
